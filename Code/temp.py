@@ -78,7 +78,11 @@ class DeblurDataset(Dataset):
         blur_tensor = torch.from_numpy(blur_img).permute(2, 0, 1)
         target_tensor = torch.from_numpy(target_img).permute(2, 0, 1)
         return blur_tensor, target_tensor
-
+def init_weights(m):
+    if isinstance(m, nn.Conv2d):
+        nn.init.xavier_uniform_(m.weight)
+        if m.bias is not None:
+            nn.init.zeros_(m.bias)
 def main():
     data_root = 'Code\dataset'         
     batch_size = 32                
@@ -93,6 +97,7 @@ def main():
     # for x in train_loader:
     #  print(x[0].shape)
     model = L10()
+    model.apply(init_weights)
     train(model, train_loader, val_loader, epochs, lr=1e-3, device=device)
 
 if __name__ == '__main__':
